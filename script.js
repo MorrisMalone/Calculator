@@ -17,11 +17,11 @@ function divide(a, b) {
 function operate(operator, a, b) {
     a = Number(a.join(''));
     b = Number(b.join(''));
-    if (operator === 'add') {return add(a,b);};
-    if (operator === 'substract') {return substract(a, b);};
-    if (operator === 'multiply') {return multiply(a,b);};
-    if (operator === 'divide' && b !== 0) {return divide(a,b);}
-    if (operator === 'divide' && b === 0) return '!OOPS!';
+    if (operator === '+') {return add(a,b);};
+    if (operator === '-') {return substract(a, b);};
+    if (operator === '*') {return multiply(a,b);};
+    if (operator === '/' && b !== 0) {return divide(a,b);}
+    if (operator === '/' && b === 0) return '!OOPS!';
 }
 
 function clear() {
@@ -45,10 +45,6 @@ function printCalcul(str) {
     currentCalcul.textContent = theCalcul;
 }
 
-function makeCalcul(calcul) {
-    if (calcul.)
-}
-
 function checkIfDot(number) {
     return !(number.some(noDot));
 }
@@ -67,6 +63,7 @@ let number1 = [];
 let number2 = [];
 let operatorChoice = '';
 let check = true;
+let checkEgal = true;
 
 //const buttonClass = button.classList.value;
 buttons.forEach((button) => {
@@ -103,30 +100,61 @@ buttons.forEach((button) => {
                 printResult(number2.join(''));
             }
             
+        } else if (button.id === 'back') {
+
+            if (number1[0] !== '-') {
+                number1.unshift('-');
+            }
+            printResult(number1.join(''));
+
         } else if (button.classList.value.slice(0, 8) === 'operator' && number2.length === 0) {
 
             operatorChoice = button.id;
-            calcul.push(number1.join(''));
-            console.log(calcul);
+            if (checkEgal) {calcul.push(number1.join(''));};
+
+            if (calcul.length < 2) {
+                calcul.push(operatorChoice);
+            } else if (calcul.length>1 && checkEgal) {
+                console.log(calcul.pop());
+                calcul.pop();
+                calcul.push(operatorChoice);
+            } else {
+                calcul.push(operatorChoice);
+                checkEgal = true;
+            }
             printCalcul(calcul);
+            console.log(calcul);
+
 
         } else if (button.classList.value.slice(0, 8) === 'operator' && number2.length > 0) {
 
             let total = operate(operatorChoice, number1, number2);
             printResult(total);
             operatorChoice =  button.id;
+
+            calcul.push(number2.join(''));
+            calcul.unshift('(');
+            calcul.push(')');
+            calcul.push(operatorChoice);
+            printCalcul(calcul);
+
             number1 = total.toString().split('');
             number2 = [];
             check = false;
             
         } else if (button.id === 'equal') {
 
+            calcul.push(number2.join(''));
+            calcul.unshift('(');
+            calcul.push(')');
+            printCalcul(calcul);
             let total = operate(operatorChoice, number1, number2);
             operatorChoice =  '';
             printResult(total);
             number1 = total.toString().split('');
             number2 = [];
             check = false;
+            checkEgal = false;
 
         } else if (button.id === 'clear') {
             clear();
